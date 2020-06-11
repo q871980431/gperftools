@@ -161,7 +161,7 @@ class PERFTOOLS_DLL_DECL PageHeap {
     uint64_t system_bytes;    // Total bytes allocated from system
     uint64_t free_bytes;      // Total bytes on normal freelists
     uint64_t unmapped_bytes;  // Total bytes on returned freelists
-    uint64_t committed_bytes;  // Bytes committed, always <= system_bytes_.
+    uint64_t committed_bytes;  // Bytes committed, always <= system_bytes_. 告知操作系统, 该虚拟内存需要使用
 
     uint64_t scavenge_count;   // Number of times scavagened flush pages
 
@@ -206,7 +206,7 @@ class PERFTOOLS_DLL_DECL PageHeap {
   // may also be larger than num_pages since page_heap might decide to
   // release one large range instead of fragmenting it into two
   // smaller released and unreleased ranges.
-  Length ReleaseAtLeastNPages(Length num_pages);
+  Length ReleaseAtLeastNPages(Length num_pages);	//尝试着去释放内存给操作系统
 
   // Reads and writes to pagemap_cache_ do not require locking.
   bool TryGetSizeClass(PageID p, uint32* out) const {

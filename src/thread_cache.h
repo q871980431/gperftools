@@ -74,7 +74,7 @@ class ThreadCache {
   enum { have_tls = false };
 #endif
 
-  void Init(pthread_t tid);
+  void Init(pthread_t tid);			//初始化
   void Cleanup();
 
   // Accessors (mostly just for printing stats)
@@ -85,10 +85,10 @@ class ThreadCache {
 
   // Allocate an object of the given size and class. The size given
   // must be the same as the size of the class in the size map.
-  void* Allocate(size_t size, uint32 cl, void *(*oom_handler)(size_t size));
-  void Deallocate(void* ptr, uint32 size_class);
+  void* Allocate(size_t size, uint32 cl, void *(*oom_handler)(size_t size));	//分配内存
+  void Deallocate(void* ptr, uint32 size_class);	//释放内存
 
-  void Scavenge();
+  void Scavenge();	//垃圾回收
 
   int GetSamplePeriod();
 
@@ -98,7 +98,7 @@ class ThreadCache {
 
   bool TryRecordAllocationFast(size_t k);
 
-  static void         InitModule();
+  static void         InitModule();		//初始化ThreadCache相关的静态数据
   static void         InitTSD();
   static ThreadCache* GetThreadHeap();
   static ThreadCache* GetCache();
@@ -297,7 +297,7 @@ class ThreadCache {
   static pthread_key_t heap_key_;
 
   // Linked list of heap objects.  Protected by Static::pageheap_lock.
-  static ThreadCache* thread_heaps_;
+  static ThreadCache* thread_heaps_;	//用于维护所有线程Cache的链表
   static int thread_heap_count_;
 
   // A pointer to one of the objects in thread_heaps_.  Represents

@@ -40,9 +40,44 @@
 #include <gperftools/malloc_extension.h>
 #include <gperftools/malloc_extension_c.h>
 
+void TestMalloc()
+{
+	void *pSmall = malloc(32);
+	void *pSmall64 = malloc(64);
+	void *pSmall1024 = malloc(1024);
+	void *pLarg128 = malloc(128 * 1024);
+	void *pLarg256 = malloc(256 * 1024);
+	void *pLarg512 = malloc(512 * 1024);
+	for (int32_t i = 0; i < 8; i++)
+	{
+		void *pBig = malloc(2 * 1024 * 1024);
+	}
+	free(pSmall) ;
+	free(pSmall64);
+	free(pSmall1024);
+	free(pLarg128);
+	free(pLarg256);
+	free(pLarg512);
+	//free(pBig);
+}
+
+struct TestPlayer 
+{
+	int32_t id;
+	std::string name;
+};
+void TestNew()
+{
+	TestPlayer *pPlayer = new TestPlayer();
+	pPlayer->id = 1;
+	pPlayer->name = "xuping";
+	delete pPlayer;
+}
+
 int main(int argc, char** argv) {
   void* a = malloc(1000);
-
+  TestMalloc();
+  TestNew();
   size_t cxx_bytes_used, c_bytes_used;
   ASSERT_TRUE(MallocExtension::instance()->GetNumericProperty(
       "generic.current_allocated_bytes", &cxx_bytes_used));

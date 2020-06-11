@@ -98,12 +98,12 @@ static const size_t kDefaultOverallThreadCacheSize = 8u * kMaxThreadCacheSize;
 #endif
 
 // Lower bound on the per-thread cache sizes
-static const size_t kMinThreadCacheSize = kMaxSize * 2;
+static const size_t kMinThreadCacheSize = kMaxSize * 2;		//512K 即单线程中的最小Cache大小
 
 // The number of bytes one ThreadCache will steal from another when
 // the first ThreadCache is forced to Scavenge(), delaying the
 // next call to Scavenge for this thread.
-static const size_t kStealAmount = 1 << 16;
+static const size_t kStealAmount = 1 << 16;		//64K
 
 // The number of times that a deallocation can cause a freelist to
 // go over its max_length() before shrinking max_length().
@@ -183,7 +183,7 @@ class SizeMap {
   static const int kMaxSmallSize = 1024;
   static const size_t kClassArraySize =
       ((kMaxSize + 127 + (120 << 7)) >> 7) + 1;
-  unsigned char class_array_[kClassArraySize];
+  unsigned char class_array_[kClassArraySize];		//用来查询 size内存大小, 所对应的size_class 配合ClassIndex使用
 
   static inline size_t SmallSizeClass(size_t s) {
     return (static_cast<uint32_t>(s) + 7) >> 3;
@@ -225,15 +225,15 @@ class SizeMap {
   // amortize the lock overhead for accessing the central list.  Making
   // it too big may temporarily cause unnecessary memory wastage in the
   // per-thread free list until the scavenger cleans up the list.
-  int num_objects_to_move_[kClassSizesMax];
+  int num_objects_to_move_[kClassSizesMax];	//size_class 对应的num_object_move数量, 数量不一致。但是总内存大小接近
 
   int NumMoveSize(size_t size);
 
   // Mapping from size class to max size storable in that class
-  int32 class_to_size_[kClassSizesMax];
+  int32 class_to_size_[kClassSizesMax];	//size_class 对应的内存大小
 
   // Mapping from size class to number of pages to allocate at a time
-  size_t class_to_pages_[kClassSizesMax];
+  size_t class_to_pages_[kClassSizesMax]; //size_class 占有的Page数量
 
  public:
   size_t num_size_classes;

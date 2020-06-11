@@ -95,7 +95,7 @@ Span* PageHeap::SearchFreeAndLargeLists(Length n) {
       // Calling EnsureLimit here is not very expensive, as it fails only if
       // there is no more normal spans (and it fails efficiently)
       // or SystemRelease does not work (there is probably no returned spans).
-      if (EnsureLimit(n)) {
+      if (EnsureLimit(n)) {	//用来保证 分配系统收到HeapLimit限制
         // ll may have became empty due to coalescing
         if (!DLL_IsEmpty(ll)) {
           ASSERT(ll->next->location == Span::ON_RETURNED_FREELIST);
@@ -114,7 +114,7 @@ Span* PageHeap::New(Length n) {
   ASSERT(Check());
   ASSERT(n > 0);
 
-  Span* result = SearchFreeAndLargeLists(n);
+  Span* result = SearchFreeAndLargeLists(n);	//从空闲的队列或者LargSet中获取可用的Span
   if (result != NULL)
     return result;
 
@@ -307,7 +307,7 @@ Span* PageHeap::Carve(Span* span, Length n) {
 
 void PageHeap::Delete(Span* span) {
   ASSERT(Check());
-  ASSERT(span->location == Span::IN_USE);
+  ASSERT(span->location == Span::IN_USE);		//默认也是IN_USE
   ASSERT(span->length > 0);
   ASSERT(GetDescriptor(span->start) == span);
   ASSERT(GetDescriptor(span->start + span->length - 1) == span);
@@ -663,7 +663,7 @@ bool PageHeap::GrowHeap(Length n) {
     }
     if (ptr == NULL) return false;
   }
-  ask = actual_size >> kPageShift;
+  ask = actual_size >> kPageShift;		//真正的分配 Page数
   RecordGrowth(ask << kPageShift);
 
   ++stats_.reserve_count;
@@ -685,7 +685,7 @@ bool PageHeap::GrowHeap(Length n) {
 
   if (old_system_bytes < kPageMapBigAllocationThreshold
       && stats_.system_bytes >= kPageMapBigAllocationThreshold) {
-    pagemap_.PreallocateMoreMemory();
+    pagemap_.PreallocateMoreMemory();	//超过128M数据时, 将整个页表给展开
   }
 
   // Make sure pagemap_ has entries for all of the new pages.

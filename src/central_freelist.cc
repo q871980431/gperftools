@@ -96,7 +96,7 @@ static
 __attribute__ ((noinline))
 #endif
 Span* MapObjectToSpan(void* object) {
-  const PageID p = reinterpret_cast<uintptr_t>(object) >> kPageShift;
+  const PageID p = reinterpret_cast<uintptr_t>(object) >> kPageShift;	//对8K进行取模
   Span* span = Static::pageheap()->GetDescriptor(p);
   return span;
 }
@@ -317,14 +317,14 @@ int CentralFreeList::FetchFromOneSpans(int N, void **start, void **end) {
 // Fetch memory from the system and add to the central cache freelist.
 void CentralFreeList::Populate() {
   // Release central list lock while operating on pageheap
-  lock_.Unlock();
-  const size_t npages = Static::sizemap()->class_to_pages(size_class_);
+  lock_.Unlock();//这样可以提高并发性，比如其它线程在从CentralCache中获取内存块
+  const size_t npages = Static::sizemap()->class_to_pages(size_class_);	//获取页面数
 
   Span* span;
   {
     SpinLockHolder h(Static::pageheap_lock());
     span = Static::pageheap()->New(npages);
-    if (span) Static::pageheap()->RegisterSizeClass(span, size_class_);
+    if (span) Static::pageheap()->RegisterSizeClass(span, size_class_);	//设置Span所属size_class, 同时对Span中的每个PageId进行Span绑定
   }
   if (span == NULL) {
     Log(kLog, __FILE__, __LINE__,

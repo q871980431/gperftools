@@ -175,7 +175,8 @@ class CentralFreeList {
   // accumulate.  Not all size classes are allowed to accumulate
   // kMaxNumTransferEntries, so there is some wasted space for those size
   // classes.
-  TCEntry tc_slots_[kMaxNumTransferEntries];
+  TCEntry tc_slots_[kMaxNumTransferEntries];	//slots cache 配合used_slots cache_size
+  //, max_cache_size 来确定释放进行slots cache。这样有利于快速的将数据分配给ThreadCache
 
   // Number of currently used cached entries in tc_slots_.  This variable is
   // updated under a lock but can be read without one.
